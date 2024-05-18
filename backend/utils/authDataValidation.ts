@@ -30,6 +30,7 @@ export const registercredentialValidation = async (
 
     return schema.validate({ name, password, email });
   } catch (error) {
+    // console.log(error + " here");
     throw new Error("Validation error: " + (error as Error).message);
   }
 };

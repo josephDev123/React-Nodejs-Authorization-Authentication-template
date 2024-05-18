@@ -1,5 +1,12 @@
 // import { extend } from "joi";
 
+export interface IGlobalErrorHandler {
+  message: string;
+  name: string;
+  statusCode: number;
+  operational: boolean;
+  type: string;
+}
 export class GlobalErrorHandler extends Error {
   statusCode;
   operational;
