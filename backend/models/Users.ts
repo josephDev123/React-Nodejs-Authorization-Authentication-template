@@ -2,7 +2,7 @@ import mongoose, { Document, Schema, Types } from "mongoose";
 import * as bcrypt from "bcrypt";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
 
-type userType = {
+export type IuserType = {
   name: string;
   email: string;
   password: string;
@@ -13,9 +13,21 @@ type userType = {
   staging: number;
   status: boolean;
 };
+
+// interface UserType extends Document {
+//   name: string;
+//   email: string;
+//   password: string;
+//   username: string;
+//   profile_id: Types.ObjectId;
+//   otp: string;
+//   confirm_otp: boolean;
+//   staging: number;
+//   status: boolean;
+// }
 //user schema
 
-const userSchema = new mongoose.Schema<userType>({
+const userSchema = new mongoose.Schema<IuserType>({
   name: {
     type: String,
     maxlength: 30,
@@ -80,4 +92,4 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-export const UserModel = mongoose.model("User", userSchema);
+export const UserModel = mongoose.model<IuserType>("User", userSchema);

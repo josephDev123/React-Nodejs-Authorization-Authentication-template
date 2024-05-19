@@ -1,16 +1,15 @@
 import { NextFunction } from "express";
-import { UserModel } from "../models/Users";
+import { IuserType } from "../models/Users";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
+import { Model } from "mongoose";
 
 export class UserRepository {
-  async create(
-    email: string,
-    name: string,
-    password: string
-    // next: NextFunction
-  ) {
+  constructor(private readonly db: Model<IuserType>) {
+    this.db = db;
+  }
+  async create(email: string, name: string, password: string) {
     try {
-      const newUser = new UserModel({
+      const newUser = new this.db({
         name: name,
         email: email,
         password: password,
@@ -30,7 +29,11 @@ export class UserRepository {
         false,
         "error"
       );
-      // return next(error);
     }
+  }
+
+  async findByEmail(email: string) {
+    // Assuming you're using an ORM like Sequelize or Mongoose
+    return await this.db.findOne({ email });
   }
 }

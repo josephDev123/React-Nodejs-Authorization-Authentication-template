@@ -11,13 +11,24 @@ export class UserService {
   constructor(private readonly UserRepository: UserRepository) {
     this.UserRepository;
   }
+  async isUserRegistered(email: string) {
+    const user = await this.UserRepository.findByEmail(email);
+    return user !== null;
+  }
+  //Register user service ---------------------------------
   async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, name, password } = req.body;
-
-      // const hashedPassword = await hashPassword(password);
-      // const isPasswordAlreadyUsed = await isPasswordAlreadyTaken(password);
-      const isEmailUsed = await isEmailAlreadyUsed(email);
+      const userExists = await this.isUserRegistered(email);
+      if (userExists) {
+        throw new GlobalErrorHandler(
+          "AuthError",
+          "Email already taken",
+          400,
+          true,
+          "error"
+        );
+      }
 
       const validationResult = await registercredentialValidation(
         name,
@@ -37,7 +48,7 @@ export class UserService {
         return;
       }
 
-      if (isEmailUsed === false) {
+      if (userExists === false) {
         return await this.UserRepository.create(email, name, password);
       }
     } catch (errorObject: any) {
