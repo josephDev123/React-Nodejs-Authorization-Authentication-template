@@ -19,9 +19,10 @@ const User_Service = new UserService(User_repository);
 const User_controller = new UserController(User_Service);
 
 // AuthRoute.post("/register", register);
-AuthRoute.post("/register", User_controller.create.bind(User_controller));
+AuthRoute.post("/register", User_controller.Register.bind(User_controller));
+// AuthRoute.post("/login", loginController);
+AuthRoute.post("/login", User_controller.Login.bind(User_controller));
 AuthRoute.post("/confirm-otp", ConfirmOtp);
-AuthRoute.post("/login", loginController);
 AuthRoute.post("/set-username", loginController);
 AuthRoute.post("/profile-pic", loginController);
 AuthRoute.get("/refresh-access-token", refresh_token);

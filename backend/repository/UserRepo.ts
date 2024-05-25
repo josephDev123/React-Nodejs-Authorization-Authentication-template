@@ -15,12 +15,7 @@ export class UserRepository {
         password: password,
         // profile_id: new mongoose.Types.ObjectId(),
       });
-      await newUser.save();
-      return {
-        error: false,
-        showMessage: true,
-        message: "New user created",
-      };
+      return await newUser.save();
     } catch (errorObject: any) {
       new GlobalErrorHandler(
         errorObject.name,
@@ -35,5 +30,10 @@ export class UserRepository {
   async findByEmail(email: string) {
     // Assuming you're using an ORM like Sequelize or Mongoose
     return await this.db.findOne({ email });
+  }
+
+  async updateOne(email: string, fieldToUpdate: any, value: any) {
+    const updateObject = { [fieldToUpdate]: value };
+    return await this.db.updateOne({ email }, updateObject);
   }
 }

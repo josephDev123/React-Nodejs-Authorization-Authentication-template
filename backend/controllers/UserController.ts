@@ -6,9 +6,14 @@ export class UserController {
     this.UserService;
   }
   // register users
-  async create(req: Request, res: Response, next: NextFunction) {
+  async Register(req: Request, res: Response, next: NextFunction) {
     const responseRes = await this.UserService.create(req, res, next);
-    console.log(responseRes);
     return res.status(201).json(responseRes).end();
+  }
+
+  // login users
+  async Login(req: Request, res: Response, next: NextFunction) {
+    const responseRes = await this.UserService.loginService(req, res, next);
+    return res.status(200).json(responseRes);
   }
 }

@@ -6,6 +6,9 @@ import {
 } from "../utils/comparePassword";
 import { registercredentialValidation } from "../utils/authDataValidation";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
+import { createToken } from "../utils/createToken";
+import { generateRandomPIN } from "../utils/generateRandomPin";
+import { sendMail } from "../utils/sendMail";
 
 export class UserService {
   constructor(private readonly UserRepository: UserRepository) {
@@ -49,7 +52,14 @@ export class UserService {
       }
 
       if (userExists === false) {
-        return await this.UserRepository.create(email, name, password);
+        const result = await this.UserRepository.create(email, name, password);
+        if (result && result.email) {
+          return {
+            error: false,
+            showMessage: true,
+            message: "New user created",
+          };
+        }
       }
     } catch (errorObject: any) {
       console.log(
@@ -77,5 +87,69 @@ export class UserService {
         return next(error);
       }
     }
+  }
+
+  //login user service ---------------------------------
+  async loginService(req: Request, res: Response, next: NextFunction) {
+    const { email, name, password } = req.body;
+    const userExists = await this.isUserRegistered(email);
+    const validationResult = await registercredentialValidation(
+      name,
+      email,
+      password
+    );
+
+    if (validationResult.error) {
+      const error = new GlobalErrorHandler(
+        "ValidateError",
+        validationResult.error.message,
+        400,
+        true,
+        "error"
+      );
+      next(error);
+      return;
+    }
+
+    if (!userExists) {
+      throw new GlobalErrorHandler(
+        "AuthError",
+        "The email is not yet registered",
+        400,
+        true,
+        "error"
+      );
+    }
+    const token = await createToken(email);
+    const otp = generateRandomPIN();
+    const payload = { email: email, otp: otp };
+    const updateUserOtpStatus = await this.UserRepository.updateOne(
+      email,
+      "otp",
+      otp
+    );
+    if (updateUserOtpStatus && !updateUserOtpStatus.acknowledged) {
+      const error = new GlobalErrorHandler(
+        "EmailOptError",
+        "Otp Email fail to send",
+        500,
+        true,
+        "error"
+      );
+      return next(error);
+    }
+    // await sendMail(payload);
+    const user = await this.UserRepository.findByEmail(email);
+    res.cookie("token", token, {
+      maxAge: 300000,
+      secure: true,
+      httpOnly: false,
+    });
+    res.cookie("user", JSON.stringify(user));
+    return {
+      success: true,
+      showMessage: false,
+      message: "login successful",
+    };
   }
 }
