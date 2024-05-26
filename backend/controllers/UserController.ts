@@ -16,4 +16,10 @@ export class UserController {
     const responseRes = await this.UserService.loginService(req, res, next);
     return res.status(200).json(responseRes);
   }
+
+  //verify confirm otp
+  async verifyOtp(req: Request, res: Response, next: NextFunction) {
+    const responseRes = await this.UserService.verifyOtpService(req, res, next);
+    return res.status(200).json(responseRes);
+  }
 }

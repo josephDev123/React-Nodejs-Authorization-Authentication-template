@@ -1,5 +1,5 @@
 import { NextFunction } from "express";
-import { IuserType } from "../models/Users";
+import { IuserType, IuserTypeOptions } from "../models/Users";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
 import { Model } from "mongoose";
 
@@ -32,8 +32,25 @@ export class UserRepository {
     return await this.db.findOne({ email });
   }
 
+  async findByFields(field_values: IuserTypeOptions) {
+    return await this.db.findOne(field_values);
+  }
+
   async updateOne(email: string, fieldToUpdate: any, value: any) {
     const updateObject = { [fieldToUpdate]: value };
     return await this.db.updateOne({ email }, updateObject);
+  }
+
+  async findOneAndUpdate(
+    condition: IuserTypeOptions,
+    fieldToUpdate: IuserTypeOptions,
+    option?: Object
+  ) {
+    return await this.db.findOneAndUpdate(
+      condition,
+      fieldToUpdate,
+      option // This option returns the updated document
+    );
+    // console.log(updatedUser)
   }
 }

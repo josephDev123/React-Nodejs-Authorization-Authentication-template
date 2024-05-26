@@ -2,6 +2,18 @@ import mongoose, { Document, Schema, Types } from "mongoose";
 import * as bcrypt from "bcrypt";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
 
+export type IuserTypeOptions = {
+  name?: string;
+  email?: string;
+  password?: string;
+  username?: string;
+  profile_id?: Types.ObjectId;
+  otp?: string;
+  confirm_otp?: boolean;
+  staging?: number;
+  status?: boolean;
+};
+
 export type IuserType = {
   name: string;
   email: string;

@@ -152,4 +152,48 @@ export class UserService {
       message: "login successful",
     };
   }
+
+  //verify otp service ---------------------------------
+  async verifyOtpService(req: Request, res: Response, next: NextFunction) {
+    const { otp, email } = req.body;
+    try {
+      const formatOtp = otp.split(",").join("");
+      const isOtp = await this.UserRepository.findByFields({
+        email: email,
+        otp: formatOtp,
+      });
+      if (!isOtp) {
+        const error = new GlobalErrorHandler(
+          "OtpError",
+          "User/Otp not found",
+          500,
+          true,
+          "error"
+        );
+        return next(error);
+      }
+      const updatedUser = await this.UserRepository.findOneAndUpdate(
+        { email: email },
+        { confirm_otp: true },
+        { new: true }
+      );
+
+      res.cookie("user", JSON.stringify(updatedUser));
+      return {
+        error: false,
+        showMessage: true,
+        message: "user verified",
+      };
+    } catch (error) {
+      const errorFormat = error as GlobalErrorHandler;
+      const errorObj = new GlobalErrorHandler(
+        errorFormat.name,
+        "Something went wrong",
+        500,
+        false,
+        "error"
+      );
+      return next(errorObj);
+    }
+  }
 }
