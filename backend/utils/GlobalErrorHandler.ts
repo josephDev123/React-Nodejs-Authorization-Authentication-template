@@ -18,8 +18,7 @@ export class GlobalErrorHandler extends Error {
     operational: boolean,
     type: string
   ) {
-    super(name);
-    this.message = msg;
+    super(msg);
     this.name = name;
     this.statusCode = statusCode;
     this.operational = operational;

@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import * as bcrypt from "bcrypt";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
 
@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema<IuserType>({
     type: String,
     required: true,
     unique: true, // Ensure uniqueness
-    match: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+    // match: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
   },
 
   password: {
@@ -92,10 +92,12 @@ userSchema.pre("save", async function (next) {
   try {
     const saltRounds = 4;
     this.password = await bcrypt.hash(this.password, saltRounds);
-  } catch (errorObj: any) {
+  } catch (errorObj) {
+    const errors = errorObj as GlobalErrorHandler;
     const error = new GlobalErrorHandler(
-      errorObj.name,
-      "Something went wrong",
+      errors.name,
+      // "Something went wrong",
+      errors.message,
       500,
       false,
       "error"

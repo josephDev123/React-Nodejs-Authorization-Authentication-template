@@ -1,4 +1,3 @@
-import { NextFunction } from "express";
 import { IuserType, IuserTypeOptions } from "../models/Users";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
 import { Model } from "mongoose";
@@ -16,10 +15,12 @@ export class UserRepository {
         // profile_id: new mongoose.Types.ObjectId(),
       });
       return await newUser.save();
-    } catch (errorObject: any) {
-      new GlobalErrorHandler(
-        errorObject.name,
-        "Something went wrong",
+    } catch (errorObject) {
+      const error = errorObject as GlobalErrorHandler;
+      throw new GlobalErrorHandler(
+        error.name,
+        // "Something went wrong",
+        error.message,
         500,
         false,
         "error"
