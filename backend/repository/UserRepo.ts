@@ -3,9 +3,7 @@ import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
 import { Model } from "mongoose";
 
 export class UserRepository {
-  constructor(private readonly db: Model<IuserType>) {
-    this.db = db;
-  }
+  constructor(private readonly db: Model<IuserType>) {}
   async create(email: string, name: string, password: string) {
     try {
       const newUser = new this.db({
@@ -17,6 +15,7 @@ export class UserRepository {
       return await newUser.save();
     } catch (errorObject) {
       const error = errorObject as GlobalErrorHandler;
+      console.log(error);
       throw new GlobalErrorHandler(
         error.name,
         // "Something went wrong",

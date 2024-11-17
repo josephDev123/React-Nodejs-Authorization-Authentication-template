@@ -18,12 +18,12 @@ export type IuserType = {
   name: string;
   email: string;
   password: string;
-  username: string;
-  profile_id: Types.ObjectId;
-  otp: string;
-  confirm_otp: boolean;
-  staging: number;
-  status: boolean;
+  // username: string;
+  // profile_id?: Types.ObjectId;
+  // otp?: string;
+  confirm_otp?: boolean;
+  staging?: number;
+  status?: boolean;
 };
 
 // interface UserType extends Document {
@@ -50,34 +50,32 @@ const userSchema = new mongoose.Schema<IuserType>({
     type: String,
     required: true,
     unique: true, // Ensure uniqueness
-    // match: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+    match: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
   },
 
   password: {
     type: String,
-    // required: true,
-    unique: true,
+    required: true,
   },
 
-  username: {
-    type: String,
-    unique: true,
-    validate: {
-      validator: function (value: any) {
-        // Alphanumeric with a length between 3 and 20 characters
-        return /^[a-zA-Z0-9]{3,20}$/.test(value);
-      },
-      message: (props) =>
-        `${props.value} is not a valid username. Must be alphanumeric and between 3 to 20 characters.`,
-    },
-  },
+  // username: {
+  //   type: String,
+  //   unique: true,
+  //   validate: {
+  //     validator: function (value: any) {
+  //       return /^[a-zA-Z0-9]{3,20}$/.test(value);
+  //     },
+  //     message: (props) =>
+  //       `${props.value} is not a valid username. Must be alphanumeric and between 3 to 20 characters.`,
+  //   },
+  // },
 
-  profile_id: {
-    type: Schema.Types.ObjectId,
-    ref: "UserProfile",
-  },
+  // profile_id: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: "UserProfile",
+  // },
 
-  otp: String,
+  // otp: String,
 
   confirm_otp: { type: Boolean, default: false },
 
