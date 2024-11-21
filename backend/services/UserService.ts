@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { UserRepository } from "../repository/UserRepo";
 import { registercredentialValidation } from "../utils/authDataValidation";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
-import { createToken } from "../utils/createToken";
+import { createToken, generateTokens } from "../utils/createToken";
 import { generateRandomPIN } from "../utils/generateRandomPin";
 import { sendMail } from "../utils/sendMail";
 
@@ -78,67 +78,80 @@ export class UserService {
   }
 
   //login user service ---------------------------------
-  async loginService(req: Request, res: Response, next: NextFunction) {
-    const { email, name, password } = req.body;
-    const userExists = await this.isUserRegistered(email);
-    const validationResult = await registercredentialValidation(
-      name,
-      email,
-      password
-    );
+  async loginService(email: string, name: string, password: string) {
+    try {
+      const userExists = await this.isUserRegistered(email);
+      const validationResult = await registercredentialValidation(
+        name,
+        email,
+        password
+      );
 
-    if (validationResult.error) {
-      const error = new GlobalErrorHandler(
-        "ValidateError",
-        validationResult.error.message,
-        400,
-        true,
-        "error"
-      );
-      next(error);
-      return;
-    }
+      if (validationResult.error) {
+        throw new GlobalErrorHandler(
+          "ValidateError",
+          validationResult.error.message,
+          400,
+          true,
+          "error"
+        );
+      }
 
-    if (!userExists) {
-      throw new GlobalErrorHandler(
-        "AuthError",
-        "The email is not yet registered",
-        400,
-        true,
-        "error"
-      );
+      if (!userExists) {
+        throw new GlobalErrorHandler(
+          "AuthError",
+          "The email is not yet registered",
+          400,
+          true,
+          "error"
+        );
+      }
+      // const token = await createToken(email);
+      const { accessToken, refreshToken } = await generateTokens(email);
+      const otp = generateRandomPIN();
+      const payload = { email: email, otp: otp };
+      // const updateUserOtpStatus = await this.UserRepository.updateOne(
+      //   email,
+      //   "otp",
+      //   otp
+      // );
+      // if (updateUserOtpStatus && !updateUserOtpStatus.acknowledged) {
+      //   throw new GlobalErrorHandler(
+      //     "EmailOptError",
+      //     "Otp Email fail to send",
+      //     500,
+      //     true,
+      //     "error"
+      //   );
+      // }
+      // await sendMail(payload);
+      const user = await this.UserRepository.findByEmail(email);
+
+      return {
+        user: user,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      };
+    } catch (error) {
+      const CustomError = error as GlobalErrorHandler;
+      if (CustomError.operational) {
+        throw new GlobalErrorHandler(
+          CustomError.name,
+          CustomError.message,
+          CustomError.statusCode,
+          CustomError.operational,
+          CustomError.type
+        );
+      } else {
+        throw new GlobalErrorHandler(
+          CustomError.name,
+          "Something went wrong",
+          CustomError.statusCode,
+          CustomError.operational,
+          CustomError.type
+        );
+      }
     }
-    const token = await createToken(email);
-    const otp = generateRandomPIN();
-    const payload = { email: email, otp: otp };
-    const updateUserOtpStatus = await this.UserRepository.updateOne(
-      email,
-      "otp",
-      otp
-    );
-    if (updateUserOtpStatus && !updateUserOtpStatus.acknowledged) {
-      const error = new GlobalErrorHandler(
-        "EmailOptError",
-        "Otp Email fail to send",
-        500,
-        true,
-        "error"
-      );
-      return next(error);
-    }
-    // await sendMail(payload);
-    const user = await this.UserRepository.findByEmail(email);
-    res.cookie("token", token, {
-      maxAge: 300000,
-      secure: true,
-      httpOnly: false,
-    });
-    res.cookie("user", JSON.stringify(user));
-    return {
-      success: true,
-      showMessage: false,
-      message: "login successful",
-    };
   }
 
   //verify otp service ---------------------------------

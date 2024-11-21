@@ -28,8 +28,18 @@ export class UserRepository {
   }
 
   async findByEmail(email: string) {
-    // Assuming you're using an ORM like Sequelize or Mongoose
-    return await this.db.findOne({ email });
+    try {
+      return await this.db.findOne({ email });
+    } catch (error) {
+      const CustomError = error as GlobalErrorHandler;
+      throw new GlobalErrorHandler(
+        CustomError.name,
+        "Something went wrong",
+        500,
+        false,
+        "error"
+      );
+    }
   }
 
   async findByFields(field_values: IuserTypeOptions) {

@@ -154,7 +154,7 @@ export const loginController = async (
 
       return next(error);
     }
-    const token = await createToken(email);
+    // const token = await createToken(email);
     // console.log(token);
     // const user_id = await UserModel.findOne({ email }, "_id");
     // const userProfile = await UserProfile.findOne({
@@ -197,11 +197,11 @@ export const loginController = async (
     //   });
     // }
 
-    res.cookie("token", token, {
-      maxAge: 300000,
-      secure: true,
-      httpOnly: false,
-    });
+    // res.cookie("token", token, {
+    //   maxAge: 300000,
+    //   secure: true,
+    //   httpOnly: false,
+    // });
     res.cookie("user", JSON.stringify(user));
 
     return res.json({
@@ -293,19 +293,19 @@ export const refresh_token = async (req: Request, res: Response) => {
     if (userExists) {
       // The user with the specified email exists
       // You can add your logic here
-      const token = await createToken(email);
+      // const token = await createToken(email);
       // console.log(token);
-      res.cookie("token", token, {
-        maxAge: 300000,
-        secure: true,
-        httpOnly: false,
-      });
-      return res.status(200).json({
-        error: false,
-        showMessage: true,
-        message: "token created successful",
-        data: token,
-      });
+      // res.cookie("token", token, {
+      //   maxAge: 300000,
+      //   secure: true,
+      //   httpOnly: false,
+      // });
+      // return res.status(200).json({
+      //   error: false,
+      //   showMessage: true,
+      //   message: "token created successful",
+      //   data: token,
+      // });
     } else {
       // The user with the specified email does not exist
       // You can add your logic here

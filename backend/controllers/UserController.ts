@@ -20,8 +20,34 @@ export class UserController {
 
   // login users
   async Login(req: Request, res: Response, next: NextFunction) {
-    const responseRes = await this.UserService.loginService(req, res, next);
-    return res.status(200).json(responseRes);
+    try {
+      const body = req.body;
+      const responseRes = await this.UserService.loginService(
+        body.email,
+        body.name,
+        body.password
+      );
+      res.cookie("token", responseRes?.accessToken, {
+        maxAge: 900000,
+        secure: true,
+        //httpOnly: false,// the token can be accessed by the browser
+      });
+      res.cookie("refreshToken", responseRes?.refreshToken, {
+        maxAge: 604800000,
+        secure: true,
+        httpOnly: false,
+      });
+      res.cookie("user", JSON.stringify(responseRes?.user));
+      const result = {
+        success: true,
+        showMessage: false,
+        message: "login successful",
+      };
+      return res.status(200).json(result);
+    } catch (error) {
+      const errorFormat = error as GlobalErrorHandler;
+      next(errorFormat);
+    }
   }
 
   //verify confirm otp
