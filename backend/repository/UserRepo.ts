@@ -1,9 +1,13 @@
+import { IOtp } from "../models/Otp";
 import { IuserType, IuserTypeOptions } from "../models/Users";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
 import { Model } from "mongoose";
 
 export class UserRepository {
-  constructor(private readonly db: Model<IuserType>) {}
+  constructor(
+    private readonly db: Model<IuserType>,
+    private readonly Otp: Model<IOtp>
+  ) {}
   async create(email: string, name: string, password: string) {
     try {
       const newUser = new this.db({
@@ -20,6 +24,27 @@ export class UserRepository {
         error.name,
         // "Something went wrong",
         error.message,
+        500,
+        false,
+        "error"
+      );
+    }
+  }
+
+  async createOpt(user_id: string, otp: string, expiresAfter?: Date) {
+    try {
+      const otpDocument = new this.Otp({
+        otp,
+        user_id,
+        expiresAfter,
+      });
+
+      await otpDocument.save();
+    } catch (error) {
+      const CustomError = error as GlobalErrorHandler;
+      throw new GlobalErrorHandler(
+        CustomError.name,
+        CustomError.message,
         500,
         false,
         "error"

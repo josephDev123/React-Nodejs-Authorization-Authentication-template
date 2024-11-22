@@ -109,7 +109,8 @@ export class UserService {
       // const token = await createToken(email);
       const { accessToken, refreshToken } = await generateTokens(email);
       const otp = generateRandomPIN();
-      const payload = { email: email, otp: otp };
+      const payload = { recieverEmail: email, otp: otp };
+
       // const updateUserOtpStatus = await this.UserRepository.updateOne(
       //   email,
       //   "otp",
@@ -124,8 +125,10 @@ export class UserService {
       //     "error"
       //   );
       // }
-      // await sendMail(payload);
+
       const user = await this.UserRepository.findByEmail(email);
+      await this.UserRepository.createOpt(String(user?._id), otp, new Date());
+      await sendMail(payload);
 
       return {
         user: user,

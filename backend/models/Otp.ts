@@ -1,9 +1,9 @@
 import mongoose, { Schema } from "mongoose";
 
-export interface IOtp {
+export interface IOtp extends Document {
   otp: string;
   user_id: Schema.Types.ObjectId;
-  expireAt: Date;
+  expiresAfter: Date;
 }
 
 const OtpSchema = new Schema<IOtp>(
@@ -11,18 +11,18 @@ const OtpSchema = new Schema<IOtp>(
     otp: {
       type: String,
       required: true,
+      unique: true,
     },
     user_id: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    expireAt: {
+    expiresAfter: {
       type: Date,
-      expires: 60,
     },
   },
   { timestamps: true }
 );
 
-export const TokenModel = mongoose.model<IOtp>("Otp", OtpSchema);
+export const OtpModel = mongoose.model<IOtp>("Otp", OtpSchema);

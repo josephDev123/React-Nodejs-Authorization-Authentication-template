@@ -14,17 +14,17 @@ export type IuserTypeOptions = {
   status?: boolean;
 };
 
-export type IuserType = {
+export interface IuserType extends Document {
   name: string;
   email: string;
   password: string;
   // username: string;
   // profile_id?: Types.ObjectId;
   // otp?: string;
-  confirm_otp?: boolean;
+  authenticated?: boolean;
   staging?: number;
   status?: boolean;
-};
+}
 
 // interface UserType extends Document {
 //   name: string;
@@ -77,7 +77,7 @@ const userSchema = new mongoose.Schema<IuserType>({
 
   // otp: String,
 
-  confirm_otp: { type: Boolean, default: false },
+  authenticated: { type: Boolean, default: false },
 
   staging: { type: Number, default: 0 },
 });
