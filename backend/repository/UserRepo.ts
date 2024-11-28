@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { IOtp } from "../models/Otp";
 import { IuserType, IuserTypeOptions } from "../models/Users";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
@@ -52,6 +53,38 @@ export class UserRepository {
     }
   }
 
+  async getOptByUserId(user_id: Types.ObjectId, otp: string) {
+    try {
+      const otpDocument = await this.Otp.findOne({ user_id, otp });
+      console.log(otpDocument);
+      return otpDocument;
+    } catch (error) {
+      const CustomError = error as GlobalErrorHandler;
+      throw new GlobalErrorHandler(
+        CustomError.name,
+        CustomError.message,
+        500,
+        false,
+        "error"
+      );
+    }
+  }
+
+  async deleteOpt(_id: Types.ObjectId) {
+    try {
+      await this.Otp.findOneAndDelete({ _id });
+    } catch (error) {
+      const CustomError = error as GlobalErrorHandler;
+      throw new GlobalErrorHandler(
+        CustomError.name,
+        CustomError.message,
+        500,
+        false,
+        "error"
+      );
+    }
+  }
+
   async findByEmail(email: string) {
     try {
       return await this.db.findOne({ email });
@@ -76,16 +109,23 @@ export class UserRepository {
     return await this.db.updateOne({ email }, updateObject);
   }
 
-  async findOneAndUpdate(
-    condition: IuserTypeOptions,
-    fieldToUpdate: IuserTypeOptions,
-    option?: Object
-  ) {
-    return await this.db.findOneAndUpdate(
-      condition,
-      fieldToUpdate,
-      option // This option returns the updated document
-    );
-    // console.log(updatedUser)
+  async findByUserIdAndUpdate(user_id: Types.ObjectId) {
+    try {
+      const updateUser = await this.db.findById(
+        { _id: user_id },
+        { authenticated: true },
+        { new: true } // This option returns the updated document
+      );
+      return updateUser;
+    } catch (error) {
+      const CustomError = error as GlobalErrorHandler;
+      throw new GlobalErrorHandler(
+        CustomError.name,
+        CustomError.message,
+        500,
+        false,
+        "error"
+      );
+    }
   }
 }

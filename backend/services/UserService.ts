@@ -5,6 +5,7 @@ import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
 import { createToken, generateTokens } from "../utils/createToken";
 import { generateRandomPIN } from "../utils/generateRandomPin";
 import { sendMail } from "../utils/sendMail";
+import { Types } from "mongoose";
 
 export class UserService {
   constructor(private readonly UserRepository: UserRepository) {
@@ -158,46 +159,44 @@ export class UserService {
   }
 
   //verify otp service ---------------------------------
-  async verifyOtpService(req: Request, res: Response, next: NextFunction) {
-    const { otp, email } = req.body;
+  async verifyOtpService(otp: string, email: string, user_id: Types.ObjectId) {
     try {
-      const formatOtp = otp.split(",").join("");
-      const isOtp = await this.UserRepository.findByFields({
-        email: email,
-        otp: formatOtp,
-      });
-      if (!isOtp) {
-        const error = new GlobalErrorHandler(
+      // const formatOtp = otp.split(",").join(""); still important
+      const otpDocument = await this.UserRepository.getOptByUserId(
+        user_id,
+        otp
+      );
+      if (!otpDocument) {
+        throw new GlobalErrorHandler(
           "OtpError",
-          "User/Otp not found",
+          "Otp not found or has expired",
           500,
           true,
           "error"
         );
-        return next(error);
       }
-      const updatedUser = await this.UserRepository.findOneAndUpdate(
-        { email: email },
-        { confirm_otp: true },
-        { new: true }
+
+      await this.UserRepository.deleteOpt(otpDocument._id);
+      const updatedUser = await this.UserRepository.findByUserIdAndUpdate(
+        user_id
       );
 
-      res.cookie("user", JSON.stringify(updatedUser));
       return {
         error: false,
         showMessage: true,
         message: "user verified",
+        user: updatedUser,
       };
     } catch (error) {
       const errorFormat = error as GlobalErrorHandler;
-      const errorObj = new GlobalErrorHandler(
+      throw new GlobalErrorHandler(
         errorFormat.name,
-        "Something went wrong",
+        // "Something went wrong",
+        errorFormat.message,
         500,
         false,
         "error"
       );
-      return next(errorObj);
     }
   }
 }

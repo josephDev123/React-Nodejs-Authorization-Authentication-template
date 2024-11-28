@@ -17,6 +17,7 @@ const OtpSchema = new Schema<IOtp>(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      unique: true,
     },
     expiresAfter: {
       type: Date,

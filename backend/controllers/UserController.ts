@@ -52,7 +52,20 @@ export class UserController {
 
   //verify confirm otp
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
-    const responseRes = await this.UserService.verifyOtpService(req, res, next);
-    return res.status(200).json(responseRes);
+    try {
+      const { email, otp, user_id } = req.body;
+      console.log(email, otp, user_id);
+      const responseRes = await this.UserService.verifyOtpService(
+        email,
+        otp,
+        user_id
+      );
+      res.cookie("user", JSON.stringify(responseRes.user));
+      return res.status(200).json(responseRes);
+    } catch (error) {
+      const errorFormat = error as GlobalErrorHandler;
+      next(errorFormat);
+    }
   }
 }
+// expiresAfter_1

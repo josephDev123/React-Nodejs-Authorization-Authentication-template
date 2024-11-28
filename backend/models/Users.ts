@@ -3,13 +3,14 @@ import * as bcrypt from "bcrypt";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
 
 export type IuserTypeOptions = {
+  _id: Types.ObjectId;
   name?: string;
   email?: string;
   password?: string;
   username?: string;
   profile_id?: Types.ObjectId;
   otp?: string;
-  confirm_otp?: boolean;
+  authenticated: boolean;
   staging?: number;
   status?: boolean;
 };
