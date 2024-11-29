@@ -53,10 +53,14 @@ export class UserRepository {
     }
   }
 
-  async getOptByUserId(user_id: Types.ObjectId, otp: string) {
+  async getOptByUserId(user_id: string, otp: string) {
+    console.log(user_id, otp);
     try {
-      const otpDocument = await this.Otp.findOne({ user_id, otp });
-      console.log(otpDocument);
+      const otpDocument = await this.Otp.findOne({
+        user_id: user_id,
+        otp: otp,
+      });
+      // console.log(otpDocument);
       return otpDocument;
     } catch (error) {
       const CustomError = error as GlobalErrorHandler;
@@ -109,12 +113,12 @@ export class UserRepository {
     return await this.db.updateOne({ email }, updateObject);
   }
 
-  async findByUserIdAndUpdate(user_id: Types.ObjectId) {
+  async findByUserIdAndUpdate(user_id: string) {
     try {
-      const updateUser = await this.db.findById(
+      const updateUser = await this.db.findByIdAndUpdate(
         { _id: user_id },
         { authenticated: true },
-        { new: true } // This option returns the updated document
+        { new: true }
       );
       return updateUser;
     } catch (error) {

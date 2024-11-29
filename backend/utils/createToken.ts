@@ -23,6 +23,7 @@ import jwt from "jsonwebtoken";
 // };
 
 export const createToken = (
+  secret: string,
   email: string,
   expiresIn: string
 ): Promise<string> => {
@@ -31,7 +32,7 @@ export const createToken = (
   return new Promise((resolve, reject) => {
     jwt.sign(
       payload,
-      process.env.SECRET as string, // Replace with your actual secret
+      secret as string, // Replace with your actual secret
       { expiresIn }, // Dynamic expiration time
       (err, token) => {
         if (err) {
@@ -48,8 +49,8 @@ export const generateTokens = async (email: string) => {
   try {
     // Generate both tokens concurrently using Promise.all
     const [accessToken, refreshToken] = await Promise.all([
-      createToken(email, "15m"), // Access token: 15 minutes
-      createToken(email, "7d"), // Refresh token: 7 days
+      createToken(process.env.TOKEN_SECRET!, email, "15m"), // Access token: 15 minutes
+      createToken(process.env.REFRESH_TOKEN_SECRET!, email, "7d"), // Refresh token: 7 days
     ]);
 
     return { accessToken, refreshToken };

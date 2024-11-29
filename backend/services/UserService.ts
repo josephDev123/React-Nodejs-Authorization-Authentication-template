@@ -159,7 +159,7 @@ export class UserService {
   }
 
   //verify otp service ---------------------------------
-  async verifyOtpService(otp: string, email: string, user_id: Types.ObjectId) {
+  async verifyOtpService(email: string, otp: string, user_id: string) {
     try {
       // const formatOtp = otp.split(",").join(""); still important
       const otpDocument = await this.UserRepository.getOptByUserId(

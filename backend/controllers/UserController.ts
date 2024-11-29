@@ -37,11 +37,13 @@ export class UserController {
         secure: true,
         httpOnly: false,
       });
-      res.cookie("user", JSON.stringify(responseRes?.user));
+      // res.cookie("user", JSON.stringify(responseRes?.user));
       const result = {
         success: true,
         showMessage: false,
         message: "login successful",
+        user: responseRes?.user,
+        token: responseRes?.accessToken,
       };
       return res.status(200).json(result);
     } catch (error) {
@@ -54,13 +56,13 @@ export class UserController {
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, otp, user_id } = req.body;
-      console.log(email, otp, user_id);
+      // console.log(email, otp, user_id);
       const responseRes = await this.UserService.verifyOtpService(
         email,
         otp,
         user_id
       );
-      res.cookie("user", JSON.stringify(responseRes.user));
+      // res.cookie("user", JSON.stringify(responseRes.user)); though, like this but i want it to be in the local storage of the user
       return res.status(200).json(responseRes);
     } catch (error) {
       const errorFormat = error as GlobalErrorHandler;
@@ -68,4 +70,3 @@ export class UserController {
     }
   }
 }
-// expiresAfter_1
