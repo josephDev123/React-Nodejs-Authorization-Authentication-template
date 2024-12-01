@@ -6,6 +6,7 @@ import { createToken, generateTokens } from "../utils/createToken";
 import { generateRandomPIN } from "../utils/generateRandomPin";
 import { sendMail } from "../utils/sendMail";
 import { Types } from "mongoose";
+import tokenIsVerify from "../utils/VerifyToken";
 
 export class UserService {
   constructor(private readonly UserRepository: UserRepository) {
@@ -197,6 +198,34 @@ export class UserService {
         false,
         "error"
       );
+    }
+  }
+
+  async refreshTokenService(refreshToken: string, email: string) {
+    try {
+      if (!refreshToken) {
+        throw new GlobalErrorHandler(
+          "RefreshTokenError",
+          "Refresh Token Required",
+          401,
+          true,
+          "error"
+        );
+      }
+
+      await tokenIsVerify(refreshToken); //decode or verify token
+      // generate a new access token
+      const newAccessToken = await createToken(
+        process.env.TOKEN_SECRET as string,
+        email,
+        "15m"
+      );
+      return {
+        accessToken: newAccessToken,
+      };
+    } catch (error) {
+      const errorFormat = error as GlobalErrorHandler;
+      throw errorFormat;
     }
   }
 }

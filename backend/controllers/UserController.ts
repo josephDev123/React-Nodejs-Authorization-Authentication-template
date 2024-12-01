@@ -69,4 +69,31 @@ export class UserController {
       next(errorFormat);
     }
   }
+
+  async refreshAccessToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { refreshToken, email } = req.body;
+      const responseRes = await this.UserService.refreshTokenService(
+        refreshToken,
+        email
+      );
+
+      res.cookie("token", responseRes?.accessToken, {
+        maxAge: 900000,
+        secure: true,
+        //httpOnly: false,// the token can be accessed by the browser
+      });
+
+      const result = {
+        success: true,
+        showMessage: false,
+        message: "new access token generated",
+        token: responseRes?.accessToken,
+      };
+      return res.status(200).json(result);
+    } catch (error) {
+      const errorFormat = error as GlobalErrorHandler;
+      next(errorFormat);
+    }
+  }
 }

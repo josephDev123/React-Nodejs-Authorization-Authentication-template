@@ -13,7 +13,11 @@ const User_controller = new UserController(User_Service);
 
 AuthRoute.post("/register", User_controller.Register.bind(User_controller));
 AuthRoute.post("/login", User_controller.Login.bind(User_controller));
-// AuthRoute.post("/confirm-otp", ConfirmOtp);
 AuthRoute.post("/confirm-otp", User_controller.verifyOtp.bind(User_controller));
-// AuthRoute.get("/refresh-access-token", refresh_token);
-// AuthRoute.post("/middleware-testing", authenticateToken, MiddlewareTesting);
+AuthRoute.get(
+  "/refresh-access-token",
+  User_controller.refreshAccessToken.bind(User_controller)
+);
+AuthRoute.post("/middleware-testing", authenticateToken, (req, res) => {
+  res.status(200).json({ message: "Access granted" });
+});

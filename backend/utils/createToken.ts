@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { GlobalErrorHandler } from "./GlobalErrorHandler";
 
 // export const createToken = async (email: any) => {
 //   const payload = {
@@ -36,7 +37,10 @@ export const createToken = (
       { expiresIn }, // Dynamic expiration time
       (err, token) => {
         if (err) {
-          reject(err);
+          // reject(err);
+          reject(
+            new GlobalErrorHandler(err.name, err.message, 500, true, "error")
+          );
         } else {
           resolve(token as string);
         }
