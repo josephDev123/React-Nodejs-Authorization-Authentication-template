@@ -3,9 +3,12 @@ import { Link } from "react-router-dom";
 import { Form } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import { useNavigation } from "react-router-dom";
+// import { AiOutlineEye } from "react-icons/ai";
+// import { useState } from "react";
 
 export default function Login() {
   // const actionData = useActionData();
+  // const [showPassword, setShowPassword] = useState<boolean>(false);
   const navigation = useNavigation();
   let isSubmitting = navigation.state === "submitting";
 
@@ -23,6 +26,20 @@ export default function Login() {
               placeholder="Enter your names"
             />
           </div>
+
+          {/* <div className="flex flex-col mt-2 relative">
+            <label>Password</label>
+            <input
+              name="password"
+              type={`${!showPassword ? "password" : "text"}`}
+              className="p-2 border-2 rounded-md outline-none focus:border-green-300 mt-1"
+              placeholder="Enter your correct password"
+            />
+            <AiOutlineEye
+              className="absolute right-1 top-11 cursor-pointer"
+              onClick={() => setShowPassword((prev) => !prev)}
+            />
+          </div> */}
 
           <div className="flex flex-col mt-2">
             <label>Email</label>
@@ -49,8 +66,7 @@ export default function Login() {
           </button>
         </Form>
         <p className="mt-4">
-          {" "}
-          Not registered yet,{" "}
+          Not registered yet,
           <Link to="/register" className="text-blue-600 font-semibold ">
             Register
           </Link>

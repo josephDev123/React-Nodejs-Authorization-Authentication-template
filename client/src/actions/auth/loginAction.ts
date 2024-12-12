@@ -1,10 +1,7 @@
+import { redirect } from "react-router-dom";
 import { axiosInstance } from "../../axios/axiosInstance";
 import { errorAlert } from "../../utils/errorAlert";
 import { AxiosError } from "axios";
-
-export interface loginActionProps {
-  request: Request;
-}
 
 export interface ErrorResponseType {
   message: string;
@@ -12,7 +9,7 @@ export interface ErrorResponseType {
   operational: boolean;
   type: string;
 }
-export const loginAction = async ({ request }: loginActionProps) => {
+export const loginAction = async ({ request }: { request: Request }) => {
   try {
     const formData = await request.formData();
 
@@ -26,18 +23,10 @@ export const loginAction = async ({ request }: loginActionProps) => {
       url: "auth/login",
       data: extractFormData,
     });
-    const res = req.data;
+    const res = await req.data;
     console.log(res);
-    // if (res.error && res.showMessage) {
-    //   errorAlert(res.message);
-    //   return null;
-    // } else if (res.error && !res.showMessage) {
-    //   errorAlert("Something went wrong");
-    //   return null;
-    // } else {
-    return (window.location.href = "/confirm-otp");
-    // }
-    // return null;
+
+    return redirect("/confirm-otp");
   } catch (error) {
     const axiosError = error as AxiosError;
 

@@ -2,7 +2,7 @@ export function getCredential() {
   const credentialsStr = decodeURIComponent(document.cookie);
   const credentialsParts = credentialsStr.split(";");
   // console.log(credentialsStr);
-  const tokenData: any = {};
+  const tokenData: Record<"token", string> = { token: "" };
   const userData: any = {};
 
   for (const part of credentialsParts) {
