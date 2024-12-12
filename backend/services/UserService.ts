@@ -85,8 +85,8 @@ export class UserService {
       const userExists = await this.isUserRegistered(email);
       const validationResult = await registercredentialValidation(
         name,
-        email,
-        password
+        email
+        // password
       );
 
       if (validationResult.error) {
@@ -162,11 +162,13 @@ export class UserService {
   //verify otp service ---------------------------------
   async verifyOtpService(email: string, otp: string, user_id: string) {
     try {
-      // const formatOtp = otp.split(",").join(""); still important
+      const formatOtp = otp.split(",").join(""); //still important
       const otpDocument = await this.UserRepository.getOptByUserId(
         user_id,
-        otp
+        formatOtp
       );
+
+      console.log(otpDocument);
       if (!otpDocument) {
         throw new GlobalErrorHandler(
           "OtpError",
