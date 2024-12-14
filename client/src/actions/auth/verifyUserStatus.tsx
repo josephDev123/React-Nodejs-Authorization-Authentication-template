@@ -1,14 +1,13 @@
 import { redirect } from "react-router-dom";
-import { getCredential } from "../../utils/getCredential";
+import { getUserSession } from "../../utils/userSession";
 
 export const verifyUserStatus = async () => {
   try {
-    const { userData } = getCredential();
-    const { user } = userData;
+    const session = getUserSession();
 
-    if (!user) {
+    if (!session) {
       return redirect("/login");
-    } else if (!user?.confirm_otp) {
+    } else if (!session?.authenticated) {
       return redirect("/confirm-otp");
     } else {
       return "hello";

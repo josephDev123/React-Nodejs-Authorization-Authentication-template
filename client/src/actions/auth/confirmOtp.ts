@@ -1,9 +1,9 @@
-import { redirect, useActionData } from "react-router-dom";
+import { redirect } from "react-router-dom";
 import { axiosInstance } from "../../axios/axiosInstance";
 import { errorAlert } from "../../utils/errorAlert";
-import Cookies from "js-cookie";
 import { AxiosError } from "axios";
 import { ErrorResponseType } from "./loginAction";
+import { getUserSession, SetUserSession } from "../../utils/userSession";
 
 interface sendOtpProps {
   request: Request;
@@ -13,12 +13,11 @@ export const ConfirmOtp = async ({ request }: sendOtpProps) => {
   try {
     const data = await request.formData();
     const otp = data.get("data");
-    const auth = Cookies.get("user");
-    const authEmail = auth ? JSON.parse(auth).email : "";
+    const session = getUserSession();
 
     const payload = {
       otp: otp,
-      email: authEmail,
+      user_id: session._id,
     };
     console.log(payload);
     const confirmOtp = await axiosInstance({
@@ -29,7 +28,7 @@ export const ConfirmOtp = async ({ request }: sendOtpProps) => {
 
     const resp = confirmOtp.data;
     console.log(resp);
-
+    SetUserSession({ key: "user", value: resp.user });
     return redirect("/");
     // return (window.location.href = "/");
   } catch (error) {

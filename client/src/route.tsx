@@ -60,7 +60,7 @@ export const mainroutes = createBrowserRouter([
     element: <Otp />,
     errorElement: "error",
     action: ConfirmOtp,
-    loader: ConfirmOtpLoader,
+    // loader: ConfirmOtpLoader,
   },
 
   {

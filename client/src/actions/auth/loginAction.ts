@@ -2,6 +2,7 @@ import { redirect } from "react-router-dom";
 import { axiosInstance } from "../../axios/axiosInstance";
 import { errorAlert } from "../../utils/errorAlert";
 import { AxiosError } from "axios";
+import { SetUserSession } from "../../utils/userSession";
 
 export interface ErrorResponseType {
   message: string;
@@ -24,7 +25,8 @@ export const loginAction = async ({ request }: { request: Request }) => {
       data: extractFormData,
     });
     const res = await req.data;
-    console.log(res);
+    // console.log(res);
+    SetUserSession({ key: "user", value: res.user });
 
     return redirect("/confirm-otp");
   } catch (error) {

@@ -1,26 +1,15 @@
 import { Form } from "react-router-dom";
-import { useState, useEffect } from "react";
-// import Cookies from "js-cookie";
-import { useActionData, useLoaderData, useNavigation } from "react-router-dom";
+import { useState } from "react";
+import { useNavigation } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
+import { getUserSession } from "../../utils/userSession";
 
 export default function Otp() {
   const [pins, setPins] = useState(Array(7).fill(""));
-  const [email, setEmail] = useState("");
-  // const data = useActionData();
-  const otpLoaderData = useLoaderData();
+
   const navigation = useNavigation();
   let isSubmitting = navigation.state === "submitting";
-
-  useEffect(() => {
-    // const user = Cookies.get("user");
-    // if (user) {
-    //   const userJson = JSON.parse(user);
-    //   setEmail(userJson.email);
-    //   console.log(userJson.email);
-    // }
-    setEmail(otpLoaderData as string);
-  }, []);
+  const session = getUserSession();
 
   const handleChangeInput = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -46,7 +35,7 @@ export default function Otp() {
     <div className="flex flex-col items-center h-screen justify-center bg-slate-200 ">
       <div className="h-96 rounded-md w-[90%] md:w-2/3 lg:w-1/2 xl:w-2/5 2xl:w-1/4 flex flex-col justify-center items-center bg-white">
         <h2 className="font-extrabold text-2xl">Enter code</h2>
-        <p className="mb-4">We sent a code to {email}</p>
+        <p className="mb-4">We sent a code to {session.email}</p>
         <p></p>
         <Form action="/confirm-otp" method="post">
           {pins.map((value, index) => (

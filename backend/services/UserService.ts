@@ -129,6 +129,7 @@ export class UserService {
       // }
 
       const user = await this.UserRepository.findByEmail(email);
+      //create otp in db
       await this.UserRepository.createOpt(String(user?._id), otp, new Date());
       await sendMail(payload);
 
