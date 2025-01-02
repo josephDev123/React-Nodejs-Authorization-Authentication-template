@@ -14,6 +14,7 @@ const User_controller = new UserController(User_Service);
 AuthRoute.post("/register", User_controller.Register.bind(User_controller));
 AuthRoute.post("/login", User_controller.Login.bind(User_controller));
 AuthRoute.post("/confirm-otp", User_controller.verifyOtp.bind(User_controller));
+AuthRoute.post("/resend-otp", () => "");
 AuthRoute.get(
   "/refresh-access-token",
   User_controller.refreshAccessToken.bind(User_controller)

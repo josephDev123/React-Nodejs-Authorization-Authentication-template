@@ -52,6 +52,12 @@ export default function Otp() {
             />
           ))}
           <input name="data" type="hidden" value={pins} />
+          <div className="flex flex-col">
+            <small className="text-xs mt-2 text-red-400">
+              Code expires after 30 minutes!
+            </small>
+          </div>
+
           <div className="flex gap-4 mt-3">
             <button
               type="submit"

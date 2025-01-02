@@ -4,8 +4,9 @@ import { getUserSession } from "../../utils/userSession";
 export const verifyUserStatus = async () => {
   try {
     const session = getUserSession();
+    console.log(session);
 
-    if (!session) {
+    if (!session._id) {
       return redirect("/login");
     } else if (!session?.authenticated) {
       return redirect("/confirm-otp");
