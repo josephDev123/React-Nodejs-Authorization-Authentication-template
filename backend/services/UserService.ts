@@ -160,6 +160,34 @@ export class UserService {
     }
   }
 
+  async resendOtpService(email: string) {
+    try {
+      const user = await this.UserRepository.findByEmail(email);
+      if (!user) {
+        throw new GlobalErrorHandler(
+          "UserError",
+          "Email not found",
+          404,
+          true,
+          "error"
+        );
+      }
+      const otp = generateRandomPIN();
+      const payload = { recieverEmail: email, otp: otp };
+      await this.UserRepository.createOpt(String(user?._id), otp, new Date());
+      await sendMail(payload);
+      return;
+    } catch (error) {
+      const CustomError = error as GlobalErrorHandler;
+      throw new GlobalErrorHandler(
+        CustomError.name,
+        CustomError.message,
+        CustomError.statusCode,
+        CustomError.operational,
+        CustomError.type
+      );
+    }
+  }
   //verify otp service ---------------------------------
   async verifyOtpService(email: string, otp: string, user_id: string) {
     try {

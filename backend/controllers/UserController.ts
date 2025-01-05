@@ -70,6 +70,17 @@ export class UserController {
     }
   }
 
+  async resendOtp(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email } = req.body;
+      const responseRes = await this.UserService.resendOtpService(email);
+      return res.status(200).json({ msg: "Otp sent" });
+    } catch (error) {
+      const errorFormat = error as GlobalErrorHandler;
+      next(errorFormat);
+    }
+  }
+
   async refreshAccessToken(req: Request, res: Response, next: NextFunction) {
     try {
       const { refreshToken, email } = req.body;
