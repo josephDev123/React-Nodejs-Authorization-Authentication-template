@@ -1,8 +1,11 @@
-FROM node:20
+
+#Build stage
+FROM node:20 
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY ./dist_old ./
-COPY .env ./
+COPY package*.json .
+RUN npm install
+COPY . .
+RUN npm run build
 EXPOSE 7000
-CMD ["npm", "run", "start"]
+
+CMD ["node", "dist_old/index.js"]
