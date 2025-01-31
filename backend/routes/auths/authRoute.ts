@@ -5,6 +5,7 @@ import { UserService } from "../../services/UserService";
 import { UserRepository } from "../../repository/UserRepo";
 import { UserModel } from "../../models/Users";
 import { OtpModel } from "../../models/Otp";
+import passport from "passport";
 
 export const AuthRoute = Router();
 const User_repository = new UserRepository(UserModel, OtpModel);
@@ -22,3 +23,15 @@ AuthRoute.get(
 AuthRoute.post("/middleware-testing", authenticateToken, (req, res) => {
   res.status(200).json({ message: "Access granted" });
 });
+
+AuthRoute.get(
+  "/login/federated/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+AuthRoute.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/" }),
+  (req, res) => {
+    res.redirect("http://localhost:5173"); // Redirect to client
+  }
+);

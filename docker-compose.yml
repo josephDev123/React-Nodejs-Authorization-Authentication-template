@@ -1,0 +1,38 @@
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - backend2
+      - backend3
+    networks:
+      - app-network
+
+  backend:
+    build: ./backend
+    ports:
+      - "7000:7000"
+    networks:
+      - app-network
+
+  backend2:
+    build: ./backend
+    ports:
+      - "7001:7000"
+    networks:
+      - app-network
+
+  backend3:
+    build: ./backend
+    ports:
+      - "7002:7000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

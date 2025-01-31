@@ -29,13 +29,13 @@ export class UserController {
       );
       res.cookie("token", responseRes?.accessToken, {
         maxAge: 900000,
-        secure: true,
-        //httpOnly: false,// the token can be accessed by the browser
+        secure: false,
+        httpOnly: true,
       });
       res.cookie("refreshToken", responseRes?.refreshToken, {
         maxAge: 604800000,
-        secure: true,
-        httpOnly: false,
+        secure: false,
+        httpOnly: true,
       });
       // res.cookie("user", JSON.stringify(responseRes?.user));
       const result = {

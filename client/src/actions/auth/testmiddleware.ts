@@ -1,8 +1,8 @@
-import { axiosInstance } from "../../axios/axiosInstance";
+// import { axiosInstance } from "../../axios/axiosInstance";
 
-const testMiddleware = async () => {
-  const testReg = await axiosInstance({
-    method: "POST",
-    url: "",
-  });
-};
+// const testMiddleware = async () => {
+//   const testReg = await axiosInstance({
+//     method: "POST",
+//     url: "",
+//   });
+// };

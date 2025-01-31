@@ -1,11 +1,9 @@
-import { NextFunction, Request, Response } from "express";
 import { UserRepository } from "../repository/UserRepo";
 import { registercredentialValidation } from "../utils/authDataValidation";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
 import { createToken, generateTokens } from "../utils/createToken";
 import { generateRandomPIN } from "../utils/generateRandomPin";
 import { sendMail } from "../utils/sendMail";
-import { Types } from "mongoose";
 import tokenIsVerify from "../utils/VerifyToken";
 
 export class UserService {
