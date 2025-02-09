@@ -25,34 +25,19 @@ const db = new DbConfig(process.env.DATABASE_URL!);
 app.use(cors(corsOption));
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  session({
-    secret: "secret",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      secure: false,
-      httpOnly: false,
-    },
-  })
-);
+// app.use(
+//   session({
+//     secret: "secret",
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//       secure: false,
+//       httpOnly: false,
+//     },
+//   })
+// );
 
 app.use(passport.initialize());
-app.use(passport.session());
-
-passport.serializeUser((user: any, done) => {
-  done(null, user.id); // Store only the user ID in the session
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await UserModel.findById(id); // Retrieve full user details
-    done(null, user);
-  } catch (error) {
-    done(error, null);
-  }
-});
-
 passport.use(
   new GoogleStrategy(
     {
@@ -61,10 +46,19 @@ passport.use(
       callbackURL: process.env.CALLBACKURL as string, // Backend URL
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log("profile", profile);
-      console.log("access", accessToken);
-      console.log("refresh", refreshToken);
-      return done(null, profile);
+      let user = await UserModel.findOne({ googleId: profile.id });
+      console.log("user:", user);
+      console.log("profile:", profile);
+      if (!user) {
+        user = new UserModel({
+          googleId: profile.id,
+          name: profile.displayName,
+          email: profile._json.email,
+          authenticated: profile._json.email_verified,
+        });
+        await user.save();
+      }
+      return done(null, user);
     }
   )
 );

@@ -6,6 +6,7 @@ import { UserRepository } from "../../repository/UserRepo";
 import { UserModel } from "../../models/Users";
 import { OtpModel } from "../../models/Otp";
 import passport from "passport";
+import { createToken, generateTokens } from "../../utils/createToken";
 
 export const AuthRoute = Router();
 const User_repository = new UserRepository(UserModel, OtpModel);
@@ -30,8 +31,36 @@ AuthRoute.get(
 );
 AuthRoute.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
-  (req, res) => {
-    res.redirect("http://localhost:5173"); // Redirect to client
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+    session: false, //disable session
+  }),
+  async (req, res) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Google authentication failed" });
+    }
+    const user = req.user as any;
+    console.log("from the token setting part", user);
+    const { accessToken, refreshToken } = await generateTokens(user?.email);
+    res.cookie("token", accessToken, {
+      maxAge: 900000,
+      secure: false,
+      httpOnly: true,
+    });
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: 604800000,
+      secure: false,
+      httpOnly: true,
+    });
+
+    const result = {
+      success: true,
+      showMessage: false,
+      message: "login successful",
+      user: req.user,
+      // token:accessToken,
+    };
+
+    res.redirect(process.env.CLIENT_URL as string); // Redirect to client
   }
 );

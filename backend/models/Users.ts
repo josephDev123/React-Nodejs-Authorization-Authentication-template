@@ -1,6 +1,7 @@
 import mongoose, { Schema, Types } from "mongoose";
 import * as bcrypt from "bcrypt";
 import { GlobalErrorHandler } from "../utils/GlobalErrorHandler";
+import { string } from "joi";
 
 export type IuserTypeOptions = {
   _id: Types.ObjectId;
@@ -16,9 +17,10 @@ export type IuserTypeOptions = {
 };
 
 export interface IuserType extends Document {
+  googleId?: string;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   // username: string;
   // profile_id?: Types.ObjectId;
   // otp?: string;
@@ -41,6 +43,11 @@ export interface IuserType extends Document {
 //user schema
 
 const userSchema = new mongoose.Schema<IuserType>({
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true, // Allows multiple users without a googleId
+  },
   name: {
     type: String,
     maxlength: 30,
@@ -56,7 +63,9 @@ const userSchema = new mongoose.Schema<IuserType>({
 
   password: {
     type: String,
-    required: true,
+    required: function () {
+      return !(this as any).googleId; // Require password only if not using Google login
+    },
   },
 
   // username: {
@@ -89,8 +98,11 @@ const userSchema = new mongoose.Schema<IuserType>({
 
 userSchema.pre("save", async function (next) {
   try {
-    const saltRounds = 4;
-    this.password = await bcrypt.hash(this.password, saltRounds);
+    if (this.password) {
+      const saltRounds = 4;
+      this.password = await bcrypt.hash(this.password, saltRounds);
+    }
+    next();
   } catch (errorObj) {
     const errors = errorObj as GlobalErrorHandler;
     const error = new GlobalErrorHandler(
