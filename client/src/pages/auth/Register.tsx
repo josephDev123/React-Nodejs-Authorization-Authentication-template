@@ -2,6 +2,7 @@ import { Form, Link, useActionData, useNavigation } from "react-router-dom";
 import { AiOutlineEye } from "react-icons/ai";
 import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 
 export default function Register() {
   const actionData = useActionData();
@@ -9,6 +10,9 @@ export default function Register() {
 
   const navigation = useNavigation();
   let isSubmitting = navigation.state === "submitting";
+  function FederatedLogin() {
+    window.location.href = "http://localhost:7000/auth/login/federated/google";
+  }
 
   console.log(actionData);
   return (
@@ -71,6 +75,14 @@ export default function Register() {
             Login
           </Link>
         </p>
+
+        <button
+          onClick={() => FederatedLogin()}
+          type="button"
+          className="rounded-full p-2 border inline-flex items-center justify-center gap-2 w-full mt-4 "
+        >
+          <FcGoogle className="text-lg" /> Sign in with Google
+        </button>
       </div>
     </div>
   );
