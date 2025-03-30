@@ -27,7 +27,10 @@ AuthRoute.post("/middleware-testing", authenticateToken, (req, res) => {
 
 AuthRoute.get(
   "/login/federated/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "consent",
+  })
 );
 AuthRoute.get(
   "/google/callback",
