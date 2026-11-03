@@ -39,6 +39,7 @@ app.use(cookieParser());
 // );
 
 app.use(passport.initialize());
+//run 3
 passport.use(googleStrategyConf);
 
 // session middleware

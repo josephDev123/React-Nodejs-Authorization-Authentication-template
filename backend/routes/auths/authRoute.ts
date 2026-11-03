@@ -25,6 +25,7 @@ AuthRoute.post("/middleware-testing", authenticateToken, (req, res) => {
   res.status(200).json({ message: "Access granted" });
 });
 
+//run 1
 AuthRoute.get(
   "/login/federated/google",
   passport.authenticate("google", {
@@ -32,18 +33,22 @@ AuthRoute.get(
     prompt: "consent",
   })
 );
+
+//run 2
 AuthRoute.get(
   "/google/callback",
   passport.authenticate("google", {
     failureRedirect: "/login",
     session: false, //disable session
   }),
+
+  //run 4
   async (req, res) => {
     if (!req.user) {
       return res.status(401).json({ message: "Google authentication failed" });
     }
     const user = req.user as any;
-    console.log("from the token setting part", user);
+    // console.log("from the token setting part", user);
     const { accessToken, refreshToken } = await generateTokens(user?.email);
     res.cookie("token", accessToken, {
       maxAge: 900000,
